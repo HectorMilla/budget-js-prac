@@ -69,7 +69,7 @@ var budgetController = (function () {
     getBudget: function () {
       return {
         budget: data.budget,
-        totalIncome: data.totals.inc,
+        totalInc: data.totals.inc,
         totalExp: data.totals.exp,
         percentage: data.percentage,
       };
@@ -94,6 +94,7 @@ var uiController = (function () {
     incomeLabel: ".budget__income--value",
     expensesLabel: ".budget__expenses--value",
     percentageLabel: ".budget__expenses--percentage",
+    container: ".container",
   };
   return {
     getInput: function () {
@@ -112,13 +113,13 @@ var uiController = (function () {
       if (type === "inc") {
         element = DOMStrings.incomeContainer;
         html =
-          '<div class="item clearfix" id="income-%id%"><div class="item__description">%description%</div><div class="right clearfix">\
+          '<div class="item clearfix" id="inc-%id%"><div class="item__description">%description%</div><div class="right clearfix">\
           <div class="item__value">%value%</div><div class="item__delete"><button class="item__delete--btn">\
           <i class="ion-ios-close-outline"></i></button></div> </div></div>';
       } else if (type === "exp") {
         element = DOMStrings.expensesContainer;
         html =
-          '<div class="item clearfix" id="expense-%id%"> <div class="item__description">%description%</div>\
+          '<div class="item clearfix" id="exp-%id%"> <div class="item__description">%description%</div>\
           <div class="right clearfix"><div class="item__value">%value%</div><div class="item__percentage">\
           21%</div><div class="item__delete"><button class="item__delete--btn">\
           <i class="ion-ios-close-outline"></i></button> </div> </div></div>';
@@ -145,8 +146,7 @@ var uiController = (function () {
     },
     displayBudget: function (obj) {
       document.querySelector(DOMStrings.budgetLabel).textContent = obj.budget;
-      document.querySelector(DOMStrings.incomeLabel).textContent =
-        obj.totalIncome;
+      document.querySelector(DOMStrings.incomeLabel).textContent = obj.totalInc;
       document.querySelector(DOMStrings.expensesLabel).textContent =
         obj.totalExp;
 
@@ -164,7 +164,6 @@ var uiController = (function () {
 var controller = (function (budgetCtrl, uiCtrl) {
   var setupEventListeners = function () {
     var DOM = uiCtrl.getDOMStrings();
-
     // Event listeners for click and keypress //
     document.querySelector(DOM.inputBtn).addEventListener("click", ctrlAddItem);
     document.addEventListener("keypress", function (event) {
@@ -172,6 +171,9 @@ var controller = (function (budgetCtrl, uiCtrl) {
         ctrlAddItem();
       }
     });
+    document
+      .querySelector(DOM.container)
+      .addEventListener("click", ctrlDeleteItem);
   };
 
   var updateBudget = function () {
@@ -195,6 +197,16 @@ var controller = (function (budgetCtrl, uiCtrl) {
       uiCtrl.clearFields();
       // 5. Calculate and update budget
       updateBudget();
+    }
+  };
+  var ctrlDeleteItem = function (event) {
+    var itemID, splitID, type, ID;
+    itemID = event.target.parentNode.parentNode.parentNode.parentNode.id;
+
+    if (itemID) {
+      splitID = itemID.split("-");
+      type = splitID[0];
+      ID = splitID[1];
     }
   };
   return {

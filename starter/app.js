@@ -134,6 +134,12 @@ var uiController = (function () {
     expensePerclabel: ".item__percentage",
     dateLabel: ".budget__title--month",
   };
+  var nodeListForEach = function (list, callback) {
+    for (var i = 0; i < list.length; i++) {
+      callback(list[i], i);
+    }
+  };
+
   var formatNumber = function (num, type) {
     var numSplit, num, dec, int;
     num = Math.abs(num);
@@ -161,11 +167,6 @@ var uiController = (function () {
 
     displayPercentages: function (percentages) {
       var fields = document.querySelectorAll(DOMStrings.expensePerclabel);
-      var nodeListForEach = function (list, callback) {
-        for (var i = 0; i < list.length; i++) {
-          callback(list[i], i);
-        }
-      };
 
       nodeListForEach(fields, function (current, index) {
         if (percentages[index] > 0) {
@@ -275,6 +276,19 @@ var uiController = (function () {
         document.querySelector(DOMStrings.percentageLabel).textContent = "---";
       }
     },
+    changeType: function () {
+      var fields = document.querySelectorAll(
+        DOMStrings.inputType +
+          "," +
+          DOMStrings.inputDescription +
+          ", " +
+          DOMStrings.inputValue
+      );
+      nodeListForEach(fields, function (cur) {
+        cur.classList.toggle("red-focus");
+      });
+      document.querySelector(DOMStrings.inputBtn).classList.toggle("red");
+    },
   };
 })();
 
@@ -292,6 +306,10 @@ var controller = (function (budgetCtrl, uiCtrl) {
     document
       .querySelector(DOM.container)
       .addEventListener("click", ctrlDeleteItem);
+
+    document
+      .querySelector(DOM.inputType)
+      .addEventListener("change", uiCtrl.changeType);
   };
 
   var updateBudget = function () {
